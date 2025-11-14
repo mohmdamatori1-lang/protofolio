@@ -1,0 +1,154 @@
+
+body {
+    margin: 0;
+    font-family: "Tahoma", sans-serif;
+    background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
+    color: white;
+    text-align: center;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(6px);
+    position: sticky;
+    top: 0;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+}
+.logo span {
+    color: #6c5ce7;
+}
+
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 40px;
+    margin: 0;
+    padding: 0;
+}
+.nav-links a {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    transition: .3s;
+}
+.nav-links a:hover {
+    color: #6c5ce7;
+}
+
+.menu-btn {
+    font-size: 30px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: none;
+}
+
+.hero {
+    padding: 80px 10px;
+    animation: fadeIn 1.5s ease;
+}
+
+.hello {
+    color: #b2bec3;
+}
+
+.title {
+    font-size: 38px;
+    margin: 10px 0;
+    animation: slideUp 1s ease-out;
+}
+
+.subtitle {
+    font-size: 18px;
+    color: #dfe6e9;
+    margin-bottom: 25px;
+}
+
+
+.btn {
+    padding: 12px 25px;
+    background: #6c5ce7;
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+}
+.btn:hover {
+    background: #4b3ccc;
+}
+
+.about {
+    padding: 40px 20px;
+}
+
+.skills-section {
+    padding: 40px 20px;
+}
+
+.skills {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.skill-card {
+    padding: 12px 25px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 10px;
+    transition: .3s;
+}
+.skill-card:hover {
+    background: #6c5ce7;
+}
+.contact {
+    padding: 50px;
+}
+
+
+footer {
+    padding: 20px;
+    background: rgba(255,255,255,0.05);
+    margin-top: 40px;
+}
+
+
+@media (max-width: 768px) {
+
+    .menu-btn { display: block; }
+
+    .nav-links {
+        position: absolute;
+        top: 60px;
+        right: 0;
+        background: rgba(255,255,255,0.06);
+        width: 180px;
+        border-radius: 8px;
+        
+        display: none;
+        padding: 15px 0;
+        
+    }
+
+    .nav-links.show {
+        display: flex;
+    }
+
+    .nav-links li {
+        margin: 10px 0;
+    }
+
+    .title {
+        font-size: 28px;
+    }
+}
