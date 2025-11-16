@@ -122,3 +122,33 @@ footer {
     margin-top: 40px;
 }
 
+
+@media (max-width: 768px) {
+
+    .menu-btn { display: block; }
+
+    .nav-links {
+        position: absolute;
+        top: 60px;
+        right: 0;
+        background: rgba(255,255,255,0.06);
+        width: 180px;
+        border-radius: 8px;
+        
+        display: none;
+        padding: 15px 0;
+        
+    }
+
+    .nav-links.show {
+        display: flex;
+    }
+
+    .nav-links li {
+        margin: 10px 0;
+    }
+
+    .title {
+        font-size: 28px;
+    }
+}
