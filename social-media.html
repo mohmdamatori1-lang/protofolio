@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HYPR — Social Media Team</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #09090b; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ef4444; }
+
+        .clip-hero { clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%); }
+        .clip-reverse { clip-path: polygon(0 15%, 100% 0, 100% 100%, 0 100%); }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes ping { 75%, 100% { transform: scale(2); opacity: 0; } }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes countUp { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+
+        .animate-spin-slow { animation: spin 10s linear infinite; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-slide-up { animation: slideUp 0.6s ease-out forwards; }
+
+        .gradient-text {
+            background: linear-gradient(to right, #ef4444, #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-hover { transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-8px); }
+
+        .social-icon { transition: all 150ms; }
+        .social-icon:hover { color: #ef4444; transform: scale(1.2); }
+
+        .team-card-img { transition: all 500ms; }
+        .team-card:hover .team-card-img { transform: scale(1.1); opacity: 1; }
+
+        .team-card-overlay { transition: all 300ms; }
+        .team-card:hover .team-card-overlay { opacity: 1; }
+
+        .nav-link { position: relative; }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #ef4444;
+            transition: width 300ms;
+        }
+        .nav-link:hover::after { width: 100%; }
+
+        .toast {
+            animation: slideUp 0.4s ease-out forwards;
+        }
+
+        /* Mobile menu */
+        .mobile-menu { transition: all 300ms; }
+        .mobile-menu.open { transform: translateX(0); opacity: 1; }
+        .mobile-menu.closed { transform: translateX(100%); opacity: 0; }
+    </style>
+</head>
+<body class="bg-[#020617] text-white overflow-x-hidden">
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 h-20 flex items-center transition-all duration-300" style="background: rgba(2,6,23,0.8); backdrop-filter: blur(12px);">
+        <div class="max-w-7xl mx-auto w-full px-6 lg:px-8 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
+                    <i data-lucide="zap" class="w-6 h-6 text-white"></i>
+                </div>
+                <span class="text-xl font-semibold tracking-tight">HYPR</span>
+            </a>
+
+            <!-- Desktop Nav -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#team" class="nav-link text-sm text-slate-300 hover:text-white transition-colors">Team</a>
+                <a href="#services" class="nav-link text-sm text-slate-300 hover:text-white transition-colors">Services</a>
+                <a href="#work" class="nav-link text-sm text-slate-300 hover:text-white transition-colors">Work</a>
+                <a href="#process" class="nav-link text-sm text-slate-300 hover:text-white transition-colors">Process</a>
+                <a href="#testimonials" class="nav-link text-sm text-slate-300 hover:text-white transition-colors">Testimonials</a>
+                <a href="#contact" class="bg-red-600 hover:bg-red-500 text-white text-sm font-medium px-6 py-2.5 rounded-full transition-all shadow-lg shadow-red-600/20">
+                    Let's Talk
+                </a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="menuBtn" class="md:hidden text-white">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="mobile-menu closed fixed top-20 right-0 bottom-0 w-72 bg-[#0f172a] border-l border-white/10 p-8 flex flex-col gap-6 md:hidden z-50">
+            <a href="#team" class="text-lg text-slate-300 hover:text-white transition-colors" onclick="closeMobileMenu()">Team</a>
+            <a href="#services" class="text-lg text-slate-300 hover:text-white transition-colors" onclick="closeMobileMenu()">Services</a>
+            <a href="#work" class="text-lg text-slate-300 hover:text-white transition-colors" onclick="closeMobileMenu()">Work</a>
+            <a href="#process" class="text-lg text-slate-300 hover:text-white transition-colors" onclick="closeMobileMenu()">Process</a>
+            <a href="#testimonials" class="text-lg text-slate-300 hover:text-white transition-colors" onclick="closeMobileMenu()">Testimonials</a>
+            <a href="#contact" class="bg-red-600 hover:bg-red-500 text-white text-sm font-medium px-6 py-3 rounded-full text-center transition-all mt-4" onclick="closeMobileMenu()">Let's Talk</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative clip-hero bg-[#020617] min-h-screen flex items-center pt-32 pb-48 overflow-hidden">
+        <!-- Decorative elements -->
+        <div class="absolute top-20 right-10 w-[500px] h-[500px] border border-red-600/20 rounded-full animate-spin-slow"></div>
+        <div class="absolute bottom-20 left-10 w-[400px] h-[400px] border border-blue-600/20 rounded-full animate-spin-slow" style="animation-direction: reverse;"></div>
+        <div class="absolute top-1/3 left-1/4 w-64 h-64 bg-red-600 rounded-full blur-[128px] opacity-20"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-48 h-48 bg-blue-600 rounded-full blur-[128px] opacity-20"></div>
+
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 w-full">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="animate-slide-up">
+                    <div class="inline-flex items-center gap-2 bg-red-600/10 border border-red-600/20 rounded-full px-4 py-2 mb-6">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                        </span>
+                        <span class="text-sm text-red-400 font-medium">Now accepting new clients</span>
+                    </div>
+
+                    <h1 class="text-4xl lg:text-7xl font-semibold leading-[1.1] tracking-tight mb-6">
+                        We make brands
+                        <span class="gradient-text"> go viral</span>
+                    </h1>
+
+                    <p class="text-lg lg:text-xl text-slate-400 leading-relaxed mb-10 max-w-lg">
+                        A elite social media team that turns scrolling into sales. We craft stories, build communities, and drive real results.
+                    </p>
+
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#contact" class="bg-red-600 hover:bg-red-500 text-white text-sm font-medium px-8 py-4 rounded-full transition-all shadow-lg shadow-red-600/20 flex items-center gap-2">
+                            Start a Project
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                        <a href="#work" class="border border-white/10 hover:border-white/30 text-white text-sm font-medium px-8 py-4 rounded-full transition-all flex items-center gap-2">
+                            View Our Work
+                            <i data-lucide="play" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+
+                    <!-- Trust indicators -->
+                    <div class="flex items-center gap-6 mt-12 pt-8 border-t border-white/10">
+                        <div>
+                            <div class="text-2xl font-bold">250<span class="text-red-500">+</span></div>
+                            <div class="text-xs text-slate-500 uppercase tracking-wide">Brands Scaled</div>
+                        </div>
+                        <div class="w-px h-10 bg-white/10"></div>
+                        <div>
+                            <div class="text-2xl font-bold">2B<span class="text-red-500">+</span></div>
+                            <div class="text-xs text-slate-500 uppercase tracking-wide">Impressions</div>
+                        </div>
+                        <div class="w-px h-10 bg-white/10"></div>
+                        <div>
+                            <div class="text-2xl font-bold">98<span class="text-red-500">%</span></div>
+                            <div class="text-xs text-slate-500 uppercase tracking-wide">Retention</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Image -->
+                <div class="relative hidden lg:block">
+                    <img src="https://picsum.photos/seed/hypr-hero-team/800/600.jpg" alt="Social media team at work" class="rounded-2xl shadow-2xl shadow-black/50 object-cover w-full h-[600px]">
+                    <!-- Floating card -->
+                    <div class="absolute -bottom-6 -left-6 bg-[#0f172a]/90 backdrop-blur-lg border border-white/10 rounded-2xl p-5 animate-float shadow-2xl">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center">
+                                <i data-lucide="trending-up" class="w-5 h-5 text-green-500"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold">+340% Engagement</div>
+                                <div class="text-xs text-slate-400">Last 30 days</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Floating card 2 -->
+                    <div class="absolute -top-4 -right-4 bg-[#0f172a]/90 backdrop-blur-lg border border-white/10 rounded-2xl p-4 animate-float" style="animation-delay: 1s;">
+                        <div class="flex items-center gap-2">
+                            <div class="flex -space-x-2">
+                                <div class="w-8 h-8 rounded-full bg-red-600 border-2 border-[#0f172a] flex items-center justify-center text-xs font-bold">A</div>
+                                <div class="w-8 h-8 rounded-full bg-orange-500 border-2 border-[#0f172a] flex items-center justify-center text-xs font-bold">M</div>
+                                <div class="w-8 h-8 rounded-full bg-blue-600 border-2 border-[#0f172a] flex items-center justify-center text-xs font-bold">S</div>
+                            </div>
+                            <span class="text-xs text-slate-400">12k+ followers today</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="relative bg-[#0f172a] py-24">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center group">
+                    <div class="w-12 h-12 bg-red-600/10 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i data-lucide="users" class="w-6 h-6 text-red-500"></i>
+                    </div>
+                    <div class="text-3xl font-bold mb-1" data-count="50">0</div>
+                    <div class="text-sm text-slate-400">Team Members</div>
+                </div>
+                <div class="text-center group">
+                    <div class="w-12 h-12 bg-red-600/10 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i data-lucide="globe" class="w-6 h-6 text-red-500"></i>
+                    </div>
+                    <div class="text-3xl font-bold mb-1" data-count="12">0</div>
+                    <div class="text-sm text-slate-400">Global Offices</div>
+                </div>
+                <div class="text-center group">
+                    <div class="w-12 h-12 bg-red-600/10 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i data-lucide="award" class="w-6 h-6 text-red-500"></i>
+                    </div>
+                    <div class="text-3xl font-bold mb-1" data-count="35">0</div>
+                    <div class="text-sm text-slate-400">Awards Won</div>
+                </div>
+                <div class="text-center group">
+                    <div class="w-12 h-12 bg-red-600/10 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <i data-lucide="heart" class="w-6 h-6 text-red-500"></i>
+                    </div>
+                    <div class="text-3xl font-bold mb-1" data-count="250">0</div>
+                    <div class="text-sm text-slate-400">Happy Clients</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="relative bg-[#020617] py-24">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-red-600 rounded-full blur-[128px] opacity-10"></div>
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-sm font-semibold text-red-500 uppercase tracking-wide">The Crew</span>
+                <h2 class="text-3xl lg:text-5xl font-semibold tracking-tight mt-3 mb-4">Meet the minds behind<br>the <span class="gradient-text">madness</span></h2>
+                <p class="text-lg text-slate-400 max-w-2xl mx-auto">Creative strategists, content wizards, and data nerds — all under one roof, obsessed with making your brand unscrollable.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Team Member 1 -->
+                <div class="team-card group relative rounded-2xl overflow-hidden cursor-pointer card-hover">
+                    <div class="aspect-[3/4] overflow-hidden">
+                        <img src="https://picsum.photos/seed/team-sarah/400/530.jpg" alt="Sarah Chen" class="team-card-img w-full h-full object-cover opacity-80">
+                    </div>
+                    <div class="team-card-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-70 flex flex-col justify-end p-6">
+                        <h3 class="text-xl font-semibold">Sarah Chen</h3>
+                        <p class="text-red-400 text-sm font-medium mb-3">Founder & CEO</p>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">Former VP of Social at a Fortune 500. 12 years building brands that break the internet.</p>
+                        <div class="flex gap-3">
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Member 2 -->
+                <div class="team-card group relative rounded-2xl overflow-hidden cursor-pointer card-hover">
+                    <div class="aspect-[3/4] overflow-hidden">
+                        <img src="https://picsum.photos/seed/team-marcus/400/530.jpg" alt="Marcus Rivera" class="team-card-img w-full h-full object-cover opacity-80">
+                    </div>
+                    <div class="team-card-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-70 flex flex-col justify-end p-6">
+                        <h3 class="text-xl font-semibold">Marcus Rivera</h3>
+                        <p class="text-red-400 text-sm font-medium mb-3">Creative Director</p>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">Award-winning creative who's turned mundane products into cultural phenomena.</p>
+                        <div class="flex gap-3">
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="dribbble" class="w-4 h-4"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Member 3 -->
+                <div class="team-card group relative rounded-2xl overflow-hidden cursor-pointer card-hover">
+                    <div class="aspect-[3/4] overflow-hidden">
+                        <img src="https://picsum.photos/seed/team-aisha/400/530.jpg" alt="Aisha Patel" class="team-card-img w-full h-full object-cover opacity-80">
+                    </div>
+                    <div class="team-card-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-70 flex flex-col justify-end p-6">
+                        <h3 class="text-xl font-semibold">Aisha Patel</h3>
+                        <p class="text-red-400 text-sm font-medium mb-3">Head of Strategy</p>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">Data-driven strategist who finds insights in chaos and turns them into viral campaigns.</p>
+                        <div class="flex gap-3">
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Member 4 -->
+                <div class="team-card group relative rounded-2xl overflow-hidden cursor-pointer card-hover">
+                    <div class="aspect-[3/4] overflow-hidden">
+                        <img src="https://picsum.photos/seed/team-jake/400/530.jpg" alt="Jake Morrison" class="team-card-img w-full h-full object-cover opacity-80">
+                    </div>
+                    <div class="team-card-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-70 flex flex-col justify-end p-6">
+                        <h3 class="text-xl font-semibold">Jake Morrison</h3>
+                        <p class="text-red-400 text-sm font-medium mb-3">Content Lead</p>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">Storyteller at heart. From TikToks to long-form, he makes content people actually save.</p>
+                        <div class="flex gap-3">
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="youtube" class="w-4 h-4"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- More team row -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-8">
+                <div class="team-card group relative rounded-2xl overflow-hidden cursor-pointer card-hover">
+                    <div class="aspect-[3/4] overflow-hidden">
+                        <img src="https://picsum.photos/seed/team-emma/400/530.jpg" alt="Emma Larsen" class="team-card-img w-full h-full object-cover opacity-80">
+                    </div>
+                    <div class="team-card-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-70 flex flex-col justify-end p-6">
+                        <h3 class="text-xl font-semibold">Emma Larsen</h3>
+                        <p class="text-red-400 text-sm font-medium mb-3">Paid Media Lead</p>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">ROAS whisperer. She turns ad spend into revenue with surgical precision.</p>
+                        <div class="flex gap-3">
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="team-card group relative rounded-2xl overflow-hidden cursor-pointer card-hover">
+                    <div class="aspect-[3/4] overflow-hidden">
+                        <img src="https://picsum.photos/seed/team-daniel/400/530.jpg" alt="Daniel Okafor" class="team-card-img w-full h-full object-cover opacity-80">
+                    </div>
+                    <div class="team-card-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-70 flex flex-col justify-end p-6">
+                        <h3 class="text-xl font-semibold">Daniel Okafor</h3>
+                        <p class="text-red-400 text-sm font-medium mb-3">Video Producer</p>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">From concept to cut. Daniel produces video content that stops thumbs mid-scroll.</p>
+                        <div class="flex gap-3">
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="youtube" class="w-4 h-4"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="team-card group relative rounded-2xl overflow-hidden cursor-pointer card-hover">
+                    <div class="aspect-[3/4] overflow-hidden">
+                        <img src="https://picsum.photos/seed/team-lily/400/530.jpg" alt="Lily Zhang" class="team-card-img w-full h-full object-cover opacity-80">
+                    </div>
+                    <div class="team-card-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-70 flex flex-col justify-end p-6">
+                        <h3 class="text-xl font-semibold">Lily Zhang</h3>
+                        <p class="text-red-400 text-sm font-medium mb-3">Community Manager</p>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">She doesn't just manage communities — she builds cult-like brand loyalty from scratch.</p>
+                        <div class="flex gap-3">
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="team-card group relative rounded-2xl overflow-hidden cursor-pointer card-hover">
+                    <div class="aspect-[3/4] overflow-hidden">
+                        <img src="https://picsum.photos/seed/team-ryan/400/530.jpg" alt="Ryan Brooks" class="team-card-img w-full h-full object-cover opacity-80">
+                    </div>
+                    <div class="team-card-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-70 flex flex-col justify-end p-6">
+                        <h3 class="text-xl font-semibold">Ryan Brooks</h3>
+                        <p class="text-red-400 text-sm font-medium mb-3">Analytics Lead</p>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">Numbers don't lie, and Ryan makes sure they tell a story your C-suite will love.</p>
+                        <div class="flex gap-3">
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                            <a href="#" class="social-icon text-slate-400"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="relative bg-[#0f172a] py-24 clip-reverse">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 pt-12">
+            <div class="text-center mb-16">
+                <span class="text-sm font-semibold text-red-500 uppercase tracking-wide">What We Do</span>
+                <h2 class="text-3xl lg:text-5xl font-semibold tracking-tight mt-3 mb-4">Services that <span class="gradient-text">move the needle</span></h2>
+                <p class="text-lg text-slate-400 max-w-2xl mx-auto">End-to-end social media solutions that turn your online presence into a revenue engine.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="group bg-[#020617] border border-white/5 rounded-2xl p-8 card-hover hover:border-red-600/30">
+                    <div class="w-14 h-14 bg-red-600/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i data-lucide="megaphone" class="w-7 h-7 text-red-500"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Social Strategy</h3>
+                    <p class="text-slate-400 leading-relaxed mb-4">Custom roadmaps aligned with your business goals. We audit, plan, and execute strategies that deliver measurable growth.</p>
+                    <a href="#" class="text-red-500 text-sm font-medium flex items-center gap-1 group/link">
+                        Learn more <i data-lucide="arrow-right" class="w-4 h-4 group-hover/link:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="group bg-[#020617] border border-white/5 rounded-2xl p-8 card-hover hover:border-red-600/30">
+                    <div class="w-14 h-14 bg-red-600/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i data-lucide="pen-tool" class="w-7 h-7 text-red-500"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Content Creation</h3>
+                    <p class="text-slate-400 leading-relaxed mb-4">Scroll-stopping visuals, copy, and video. From carousels to Reels, we produce content your audience saves and shares.</p>
+                    <a href="#" class="text-red-500 text-sm font-medium flex items-center gap-1 group/link">
+                        Learn more <i data-lucide="arrow-right" class="w-4 h-4 group-hover/link:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="group bg-[#020617] border border-white/5 rounded-2xl p-8 card-hover hover:border-red-600/30">
+                    <div class="w-14 h-14 bg-red-600/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i data-lucide="target" class="w-7 h-7 text-red-500"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Paid Social</h3>
+                    <p class="text-slate-400 leading-relaxed mb-4">High-ROAS ad campaigns across Meta, TikTok, LinkedIn & more. We optimize every dollar to maximize your return.</p>
+                    <a href="#" class="text-red-500 text-sm font-medium flex items-center gap-1 group/link">
+                        Learn more <i data-lucide="arrow-right" class="w-4 h-4 group-hover/link:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+
+                <!-- Service 4 -->
+                <div class="group bg-[#020617] border border-white/5 rounded-2xl p-8 card-hover hover:border-red-600/30">
+                    <div class="w-14 h-14 bg-red-600/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i data-lucide="users" class="w-7 h-7 text-red-500"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Community Management</h3>
+                    <p class="text-slate-400 leading-relaxed mb-4">We engage, respond, and build relationships with your audience 24/7. Turn followers into superfans and advocates.</p>
+                    <a href="#" class="text-red-500 text-sm font-medium flex items-center gap-1 group/link">
+                        Learn more <i data-lucide="arrow-right" class="w-4 h-4 group-hover/link:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+
+                <!-- Service 5 -->
+                <div class="group bg-[#020617] border border-white/5 rounded-2xl p-8 card-hover hover:border-red-600/30">
+                    <div class="w-14 h-14 bg-red-600/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i data-lucide="user-check" class="w-7 h-7 text-red-500"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Influencer Marketing</h3>
+                    <p class="text-slate-400 leading-relaxed mb-4">We connect you with creators who actually move product. Full campaign management from sourcing to reporting.</p>
+                    <a href="#" class="text-red-500 text-sm font-medium flex items-center gap-1 group/link">
+                        Learn more <i data-lucide="arrow-right" class="w-4 h-4 group-hover/link:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+
+                <!-- Service 6 -->
+                <div class="group bg-[#020617] border border-white/5 rounded-2xl p-8 card-hover hover:border-red-600/30">
+                    <div class="w-14 h-14 bg-red-600/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i data-lucide="bar-chart-3" class="w-7 h-7 text-red-500"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Analytics & Reporting</h3>
+                    <p class="text-slate-400 leading-relaxed mb-4">Real-time dashboards and monthly deep dives. We translate data into action items that continuously improve performance.</p>
+                    <a href="#" class="text-red-500 text-sm font-medium flex items-center gap-1 group/link">
+                        Learn more <i data-lucide="arrow-right" class="w-4 h-4 group-hover/link:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Work / Portfolio Section -->
+    <section id="work" class="relative bg-[#020617] py-24">
+        <div class="absolute bottom-0 left-1/3 w-64 h-64 bg-red-600 rounded-full blur-[128px] opacity-10"></div>
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-sm font-semibold text-red-500 uppercase tracking-wide">Portfolio</span>
+                <h2 class="text-3xl lg:text-5xl font-semibold tracking-tight mt-3 mb-4">Work that <span class="gradient-text">speaks volumes</span></h2>
+                <p class="text-lg text-slate-400 max-w-2xl mx-auto">Real results for real brands. Here's a glimpse at what we've built.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Project 1 -->
+                <div class="group relative rounded-2xl overflow-hidden cursor-pointer card-hover">
+                    <div class="aspect-[4/3] overflow-hidden">
+                        <img src="https://picsum.photos/seed/project-fashion/600/450.jpg" alt="Fashion brand campaign" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500">
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
+                        <span class="text-xs text-red-400 font-semibold uppercase tracking-wide mb-1">Fashion & Lifestyle</span>
+                        <h3 class="text-lg font-semibold">NovaBloom</h3>
+                        <p class="text-sm text-slate-400">+520% follower growth in 6 months</p>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="group relative rounded-2xl overflow-hidden cursor-pointer card-hover">
+                    <div class="aspect-[4/3] overflow-hidden">
+                        <img src="https://picsum.photos/seed/project-fintech/600/450.jpg" alt="Fintech social campaign" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500">
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
+                        <span class="text-xs text-red-400 font-semibold uppercase tracking-wide mb-1">Fintech</span>
+                        <h3 class="text-lg font-semibold">PayFlow</h3>
+                        <p class="text-sm text-slate-400">Viral campaign — 15M impressions in 48hrs</p>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="group relative rounded-2xl overflow-hidden cursor-pointer card-hover">
+                    <div class="aspect-[4/3] overflow-hidden">
+                        <img src="https://picsum.photos/seed/project-food/600/450.jpg" alt="Food brand launch" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500">
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
+                        <span class="text-xs text-red-400 font-semibold uppercase tracking-wide mb-1">Food & Beverage</span>
+                        <h3 class="text-lg font-semibold">GreenBite</h3>
+                        <p class="text-sm text-slate-400">Product launch — 50K units sold via social</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section id="process" class="relative bg-[#0f172a] py-24">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-sm font-semibold text-red-500 uppercase tracking-wide">How It Works</span>
+                <h2 class="text-3xl lg:text-5xl font-semibold tracking-tight mt-3 mb-4">Our <span class="gradient-text">proven process</span></h2>
+                <p class="text-lg text-slate-400 max-w-2xl mx-auto">Four steps from "who are you?" to "how did you go so viral?"</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="relative group">
+                    <div class="text-7xl font-bold text-white/5 absolute -top-4 -left-2">01</div>
+                    <div class="relative z-10 pt-8">
+                        <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                            <i data-lucide="search" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2">Discovery</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Deep dive into your brand, audience, competitors, and goals. We find the white space.</p>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <div class="text-7xl font-bold text-white/5 absolute -top-4 -left-2">02</div>
+                    <div class="relative z-10 pt-8">
+                        <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                            <i data-lucide="lightbulb" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2">Strategy</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Custom roadmap with content pillars, posting cadence, platform strategy, and KPIs.</p>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <div class="text-7xl font-bold text-white/5 absolute -top-4 -left-2">03</div>
+                    <div class="relative z-10 pt-8">
+                        <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                            <i data-lucide="rocket" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2">Launch</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Content goes live. Ads launch. Community ignites. We move fast and iterate faster.</p>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <div class="text-7xl font-bold text-white/5 absolute -top-4 -left-2">04</div>
+                    <div class="relative z-10 pt-8">
+                        <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                            <i data-lucide="trending-up" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2">Scale</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">Analyze what works, double down, and scale. Monthly reports + weekly optimizations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="relative bg-[#020617] py-24">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-red-600 rounded-full blur-[128px] opacity-10"></div>
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-sm font-semibold text-red-500 uppercase tracking-wide">Testimonials</span>
+                <h2 class="text-3xl lg:text-5xl font-semibold tracking-tight mt-3 mb-4">What our clients <span class="gradient-text">say about us</span></h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-[#0f172a] border border-white/5 rounded-2xl p-8 card-hover">
+                    <div class="flex gap-1 mb-4">
+                        <i data-lucide="star" class="w-4 h-4 text-yellow-500 fill-yellow-500"></i>
+                        <i data-lucide="star" class="w-4 h-4 text-yellow-500 fill-yellow-500"></i>
+                        <i data-lucide="star" class="w-4 h-4 text-yellow-500 fill-yellow-500"></i>
+                        <i data-lucide="star" class="w-4 h-4 text-yellow-500 fill-yellow-500"></i>
+                        <i data-lucide="star" class="w-4 h-4 text-yellow-500 fill-yellow-500"></i>
+                    </div>
+                    <p class="text-slate-300 leading-relaxed mb-6">"HYPR didn't just grow our following — they transformed our entire brand presence. Revenue from social went from 8% to 34% of total sales in 5 months."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-sm font-bold">JC</div>
+                        <div>
+                            <div class="text-sm font-semibold">Jessica Cox</div>
+                            <div class="text-xs text-slate-500">CMO, NovaBloom</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="bg-[#0f172a] border border-white/5 rounded-2xl p-8 card-hover">
+                    <div class="flex gap-1 mb-4">
+                        <i data-lucide="star" class="w-4 h-4 text-yellow-500 fill-yellow-500"></i>
+                        <i data-lucide="star" class="w-4 h-4 text-yellow-500 fill-yellow-500"></i>
+                        <i data-lucide="star" class="w-4 h-4 text-yellow-500 fill-yellow-500"></i>
+                        <i data-lucide="star" class="w-4 h-4 text-yellow-500 fill-yellow-500"></i>
+                        <i data-lucide="star" class="w-4 h-4 text-yellow-500 fill-yellow-500"></i>
+                    </div>
+                    <p class="text-slate-300 leading-relaxed mb-6">"We went from zero TikTok presence to 200K followers and $1.2M in attributed revenue. The HYPR team operates like an extension of our own."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-sm font-bold">MR</div>
+                        <div>
+                            <div class="text-sm font-semibold">Mike Rodriguez</div>
+                            <div class="text-xs text-slate-500">CEO, PayFlow</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="bg-[#0f172a] border border-white/5 rounded-2xl p-8 card-hover">
+                    <div class="flex gap-1 mb-4">
+                        <i data-lucide="star" class="w-4 h-4 text-yellow-500 fill-yellow-500"></i>
+                        <i data-lucide="star" class="w-4 h-4 text-yellow-500 fill-yellow-500"></i>
+                        <i data-lucide="star" class="w-4 h-4 text-yellow-500 fill-yellow-500"></i>
+                        <i data-lucide="star" class="w-4 h-4 text-yellow-500 fill-yellow-500"></i>
+                        <i data-lucide="star" class="w-4 h-4 text-yellow-500 fill-yellow-500"></i>
+                    </div>
+                    <p class="text-slate-300 leading-relaxed mb-6">"Their creative is next level. Every post feels on-brand, fresh, and actually converts. Best agency partnership we've ever had — by a mile."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-sm font-bold">AL</div>
+                        <div>
+                            <div class="text-sm font-semibold">Amanda Liu</div>
+                            <div class="text-xs text-slate-500">Founder, GreenBite</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Brands / Logos -->
+    <section class="bg-[#0f172a] py-16 border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <p class="text-center text-sm text-slate-500 uppercase tracking-wide mb-10">Trusted by innovative brands worldwide</p>
+            <div class="grid grid-cols-3 md:grid-cols-6 gap-8 items-center">
+                <div class="flex items-center justify-center text-slate-600 hover:text-slate-400 grayscale hover:grayscale-0 transition-all duration-300 cursor-pointer">
+                    <i data-lucide="hexagon" class="w-8 h-8 mr-2"></i><span class="font-semibold text-sm">Vertex</span>
+                </div>
+                <div class="flex items-center justify-center text-slate-600 hover:text-slate-400 grayscale hover:grayscale-0 transition-all duration-300 cursor-pointer">
+                    <i data-lucide="triangle" class="w-8 h-8 mr-2"></i><span class="font-semibold text-sm">Prism</span>
+                </div>
+                <div class="flex items-center justify-center text-slate-600 hover:text-slate-400 grayscale hover:grayscale-0 transition-all duration-300 cursor-pointer">
+                    <i data-lucide="circle" class="w-8 h-8 mr-2"></i><span class="font-semibold text-sm">Orbit</span>
+                </div>
+                <div class="flex items-center justify-center text-slate-600 hover:text-slate-400 grayscale hover:grayscale-0 transition-all duration-300 cursor-pointer">
+                    <i data-lucide="diamond" class="w-8 h-8 mr-2"></i><span class="font-semibold text-sm">Carat</span>
+                </div>
+                <div class="flex items-center justify-center text-slate-600 hover:text-slate-400 grayscale hover:grayscale-0 transition-all duration-300 cursor-pointer">
+                    <i data-lucide="pentagon" class="w-8 h-8 mr-2"></i><span class="font-semibold text-sm">Quint</span>
+                </div>
+                <div class="flex items-center justify-center text-slate-600 hover:text-slate-400 grayscale hover:grayscale-0 transition-all duration-300 cursor-pointer">
+                    <i data-lucide="octagon" class="w-8 h-8 mr-2"></i><span class="font-semibold text-sm">Octa</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA / Contact Section -->
+    <section id="contact" class="relative bg-[#020617] py-24">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-red-600 rounded-full blur-[128px] opacity-10"></div>
+        <div class="max-w-4xl mx-auto px-6 lg:px-8 relative z-10">
+            <div class="bg-[#0f172a] border border-white/10 rounded-2xl p-8 lg:p-16 text-center shadow-2xl">
+                <div class="inline-flex items-center gap-2 bg-red-600/10 border border-red-600/20 rounded-full px-4 py-2 mb-6">
+                    <i data-lucide="flame" class="w-4 h-4 text-red-500"></i>
+                    <span class="text-sm text-red-400 font-medium">Limited spots for Q1 2025</span>
+                </div>
+
+                <h2 class="text-3xl lg:text-5xl font-semibold tracking-tight mb-4">Ready to <span class="gradient-text">break the internet?</span></h2>
+                <p class="text-lg text-slate-400 max-w-xl mx-auto mb-10">Tell us about your brand and goals. We'll show you how we'd make you unscrollable.</p>
+
+                <!-- Contact Form -->
+                <form id="contactForm" class="max-w-lg mx-auto text-left space-y-5">
+                    <div>
+                        <label class="text-sm text-slate-400 mb-1 block">Your Name</label>
+                        <input type="text" placeholder="Jane Smith" required class="w-full bg-[#020617] border border-white/10 rounded-lg px-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-red-600 transition-colors">
+                    </div>
+                    <div>
+                        <label class="text-sm text-slate-400 mb-1 block">Email</label>
+                        <input type="email" placeholder="jane@company.com" required class="w-full bg-[#020617] border border-white/10 rounded-lg px-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-red-600 transition-colors">
+                    </div>
+                    <div>
+                        <label class="text-sm text-slate-400 mb-1 block">Brand / Company</label>
+                        <input type="text" placeholder="Acme Inc." class="w-full bg-[#020617] border border-white/10 rounded-lg px-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-red-600 transition-colors">
+                    </div>
+                    <div>
+                        <label class="text-sm text-slate-400 mb-1 block">Monthly Budget</label>
+                        <select class="w-full bg-[#020617] border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-red-600 transition-colors appearance-none cursor-pointer">
+                            <option value="" class="text-slate-600">Select a range</option>
+                            <option value="5k-10k">$5,000 – $10,000</option>
+                            <option value="10k-25k">$10,000 – $25,000</option>
+                            <option value="25k-50k">$25,000 – $50,000</option>
+                            <option value="50k+">$50,000+</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-sm text-slate-400 mb-1 block">Tell us about your goals</label>
+                        <textarea rows="4" placeholder="We want to grow our Instagram and launch a TikTok strategy..." class="w-full bg-[#020617] border border-white/10 rounded-lg px-4 py-3 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-red-600 transition-colors resize-none"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-red-600 hover:bg-red-500 text-white font-medium py-4 rounded-full transition-all shadow-lg shadow-red-600/20 flex items-center justify-center gap-2">
+                        Send It
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#0f172a] border-t border-white/5 py-16">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div class="md:col-span-1">
+                    <a href="#" class="flex items-center gap-2 mb-4">
+                        <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
+                            <i data-lucide="zap" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <span class="text-xl font-semibold tracking-tight">HYPR</span>
+                    </a>
+                    <p class="text-sm text-slate-400 leading-relaxed">The social media team that turns scrolling into sales. Based globally, creating universally.</p>
+                    <div class="flex gap-4 mt-6">
+                        <a href="#" class="social-icon text-slate-500 hover:text-red-500"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+                        <a href="#" class="social-icon text-slate-500 hover:text-red-500"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+                        <a href="#" class="social-icon text-slate-500 hover:text-red-500"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
+                        <a href="#" class="social-icon text-slate-500 hover:text-red-500"><i data-lucide="youtube" class="w-5 h-5"></i></a>
+                        <a href="#" class="social-icon text-slate-500 hover:text-red-500"><i data-lucide="facebook" class="w-5 h-5"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-sm font-semibold uppercase tracking-wide mb-4">Services</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-sm text-slate-400 hover:text-white transition-colors">Social Strategy</a></li>
+                        <li><a href="#" class="text-sm text-slate-400 hover:text-white transition-colors">Content Creation</a></li>
+                        <li><a href="#" class="text-sm text-slate-400 hover:text-white transition-colors">Paid Social</a></li>
+                        <li><a href="#" class="text-sm text-slate-400 hover:text-white transition-colors">Community Management</a></li>
+                        <li><a href="#" class="text-sm text-slate-400 hover:text-white transition-colors">Influencer Marketing</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-sm font-semibold uppercase tracking-wide mb-4">Company</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-sm text-slate-400 hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="#team" class="text-sm text-slate-400 hover:text-white transition-colors">Team</a></li>
+                        <li><a href="#" class="text-sm text-slate-400 hover:text-white transition-colors">Careers</a></li>
+                        <li><a href="#work" class="text-sm text-slate-400 hover:text-white transition-colors">Case Studies</a></li>
+                        <li><a href="#" class="text-sm text-slate-400 hover:text-white transition-colors">Blog</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-sm font-semibold uppercase tracking-wide mb-4">Contact</h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-center gap-2 text-sm text-slate-400"><i data-lucide="mail" class="w-4 h-4 text-red-500"></i> hello@hypr.agency</li>
+                        <li class="flex items-center gap-2 text-sm text-slate-400"><i data-lucide="phone" class="w-4 h-4 text-red-500"></i> +1 (555) 234-5678</li>
+                        <li class="flex items-center gap-2 text-sm text-slate-400"><i data-lucide="map-pin" class="w-4 h-4 text-red-500"></i> New York • London • Singapore</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-sm text-slate-500">© 2025 HYPR Agency. All rights reserved.</p>
+                <div class="flex gap-6">
+                    <a href="#" class="text-sm text-slate-500 hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="text-sm text-slate-500 hover:text-white transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast notification container -->
+    <div id="toastContainer" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-3"></div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        let menuOpen = false;
+
+        menuBtn.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            if (menuOpen) {
+                mobileMenu.classList.remove('closed');
+                mobileMenu.classList.add('open');
+            } else {
+                closeMobileMenu();
+            }
+        });
+
+        function closeMobileMenu() {
+            menuOpen = false;
+            mobileMenu.classList.remove('open');
+            mobileMenu.classList.add('closed');
+        }
+
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(2,6,23,0.95)';
+                navbar.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+            } else {
+                navbar.style.background = 'rgba(2,6,23,0.8)';
+                navbar.style.borderBottom = 'none';
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href === '#') return;
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Counter animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('[data-count]');
+            counters.forEach(counter => {
+                const target = parseInt(counter.dataset.count);
+                const duration = 2000;
+                const start = performance.now();
+
+                function update(now) {
+                    const elapsed = now - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    // Ease out
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    counter.textContent = Math.round(target * eased) + (target >= 50 ? '+' : '+');
+                    if (progress < 1) {
+                        requestAnimationFrame(update);
+                    }
+                }
+
+                requestAnimationFrame(update);
+            });
+        }
+
+        // Intersection Observer for scroll animations
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Trigger counter animation when stats section is visible
+                    if (entry.target.querySelector('[data-count]')) {
+                        animateCounters();
+                    }
+                    entry.target.classList.add('animate-slide-up');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe sections
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Toast notification system
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const iconName = type === 'success' ? 'check-circle' : 'alert-circle';
+            const bgColor = type === 'success' ? 'bg-green-500/20 border-green-500/30' : 'bg-red-500/20 border-red-500/30';
+            const iconColor = type === 'success' ? 'text-green-500' : 'text-red-500';
+
+            toast.className = `toast ${bgColor} border backdrop-blur-lg rounded-xl px-5 py-4 flex items-center gap-3 shadow-2xl max-w-sm`;
+            toast.innerHTML = `
+                <i data-lucide="${iconName}" class="w-5 h-5 ${iconColor} flex-shrink-0"></i>
+                <span class="text-sm text-white">${message}</span>
+            `;
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100px)';
+                toast.style.transition = 'all 300ms';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // Contact form submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<svg class="animate-spin w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Sending...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+                lucide.createIcons();
+                this.reset();
+                showToast("We got your message! We'll be in touch within 24 hours.", 'success');
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
+
